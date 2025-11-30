@@ -29,7 +29,7 @@ def epsilon_greedy(Q, s, epsilone):
         return np.argmax(Q[s])
 
 
-def epsilon_exponential(e, n_epochs, k=0.001):
+def epsilon_exponential(e, k=0.001):
     """
     Function that implement an exponential decay from 1 -> 0
     eps(e) = exp(-k * e)
@@ -49,18 +49,20 @@ if __name__ == "__main__":
 
     Q = np.zeros([env.observation_space.n, env.action_space.n])
 
-    alpha = 0.01 # choose your own
+    alpha = 0.04  # choose your own
 
-    gamma = 0.8 # choose your own
+    gamma = 0.8  # choose your own
 
-    epsilon = 0.2 # choose your own
+    epsilon = 0.2  # choose your own
 
-    n_epochs = 10000 # choose your own
-    max_itr_per_epoch = 200 # choose your own
+    n_epochs = 10000  # choose your own
+    max_itr_per_epoch = 200  # choose your own
     rewards = []
 
+    k = 0.0005
+
     # plot epsilon decay
-    eps_values = [epsilon_exponential(e, n_epochs, 0.0005) for e in range(n_epochs)]
+    eps_values = [epsilon_exponential(e, k) for e in range(n_epochs)]
     plt.plot(eps_values)
     plt.title("Exponential epsilon decay (1 -> 0)")
     plt.xlabel("Episode")
@@ -70,7 +72,7 @@ if __name__ == "__main__":
     for e in range(n_epochs):
         r = 0
 
-        epsilon = epsilon_exponential(e, n_epochs)
+        epsilon = epsilon_exponential(e, k)
 
         S, _ = env.reset()
 
@@ -90,7 +92,8 @@ if __name__ == "__main__":
             if done:
                 break
 
-        print("episode #", e, " : r = ", r)
+        print(f"episode #{e} : r = {r}, epsilon = {epsilon:.4f}")
+
 
         rewards.append(r)
 
@@ -104,14 +107,12 @@ if __name__ == "__main__":
     plt.title("Rewards vs Epochs")
     plt.show()
 
-
     print("Training finished.\n")
 
-    
     """
-    
+
     Evaluate the q-learning algorihtm
-    
+
     """
 
     env.close()
