@@ -29,6 +29,18 @@ def epsilon_greedy(Q, s, epsilone):
         return np.argmax(Q[s])
 
 
+def epsilon_exponential(e, n_epochs, k=0.001):
+    """
+    Function that implement an exponential decay from 1 -> 0
+    eps(e) = exp(-k * e)
+    Normalized so eps(0)=1 and eps(n_epochs)=0
+    k is a constant that control the speed of decay, k -> 0 means linear decay
+    0 < k < 0.01 is a good range to explore
+    Exponential may not give the best results but is an intersting choice to explore
+    """
+    return np.exp(-k * e)
+
+
 if __name__ == "__main__":
     env = gym.make("Taxi-v3", render_mode=None)
 
@@ -47,8 +59,18 @@ if __name__ == "__main__":
     max_itr_per_epoch = 200 # choose your own
     rewards = []
 
+    # plot epsilon decay
+    eps_values = [epsilon_exponential(e, n_epochs, 0.0005) for e in range(n_epochs)]
+    plt.plot(eps_values)
+    plt.title("Exponential epsilon decay (1 -> 0)")
+    plt.xlabel("Episode")
+    plt.ylabel("Epsilon")
+    plt.show()
+
     for e in range(n_epochs):
         r = 0
+
+        epsilon = epsilon_exponential(e, n_epochs)
 
         S, _ = env.reset()
 
